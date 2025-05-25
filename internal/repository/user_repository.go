@@ -17,10 +17,21 @@ func (r *UserRepository) Create(user *models.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r *UserRepository) List() ([]models.User, error) {
+func (r *UserRepository) List(page, limit int) ([]models.User, int64, error) {
 	var users []models.User
-	err := r.db.Find(&users).Error
-	return users, err
+	var total int64
+
+	// Get total count
+	if err := r.db.Model(&models.User{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	// Calculate offset
+	offset := (page - 1) * limit
+
+	// Get paginated results
+	err := r.db.Offset(offset).Limit(limit).Find(&users).Error
+	return users, total, err
 }
 
 func (r *UserRepository) GetByID(id uint) (*models.User, error) {

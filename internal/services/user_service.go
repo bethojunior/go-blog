@@ -26,8 +26,35 @@ func (s *UserService) CreateUser(user *models.User) error {
 	return s.repo.Create(user)
 }
 
-func (s *UserService) ListUser() ([]models.User, error) {
-	return s.repo.List()
+type ListUserResponse struct {
+	Users []models.User `json:"users"`
+	Total int64         `json:"total"`
+	Page  int           `json:"page"`
+	Limit int           `json:"limit"`
+}
+
+func (s *UserService) ListUser(page, limit int) (*ListUserResponse, error) {
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 10
+	}
+	if limit > 100 {
+		limit = 100
+	}
+
+	users, total, err := s.repo.List(page, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ListUserResponse{
+		Users: users,
+		Total: total,
+		Page:  page,
+		Limit: limit,
+	}, nil
 }
 
 func (s *UserService) GetUser(id uint) (*models.User, error) {
