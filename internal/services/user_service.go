@@ -25,3 +25,14 @@ func (s *UserService) CreateUser(user *models.User) error {
 
 	return s.repo.Create(user)
 }
+
+func (s *UserService) ListUser() ([]models.User, error) {
+	return s.repo.List()
+}
+
+func (s *UserService) GetUser(id uint) (*models.User, error) {
+	if id == 0 {
+		return nil, errors.New("invalid user ID")
+	}
+	return s.repo.GetByID(id)
+}

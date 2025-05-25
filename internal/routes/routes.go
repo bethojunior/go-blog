@@ -9,6 +9,8 @@ func SetupRoutes(r *gin.Engine, userHandler *handlers.UserHandler) {
     userGroup := r.Group("/users")
     {
         userGroup.POST("/", userHandler.CreateUser)
+        userGroup.GET("/", userHandler.ListUser)
+        userGroup.GET("/:id", userHandler.GetUser)
     }
 }
 

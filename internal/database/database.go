@@ -1,10 +1,13 @@
 package database
 
 import (
-    "gorm.io/driver/mysql"
-    "gorm.io/gorm"
     "log"
     "os"
+
+    "gorm.io/driver/mysql"
+    "gorm.io/gorm"
+
+    "github.com/bethojunior/go-blog/internal/models"
 )
 
 func InitDB() *gorm.DB {
@@ -13,5 +16,11 @@ func InitDB() *gorm.DB {
     if err != nil {
         log.Fatal("Erro ao conectar no banco:", err)
     }
+
+    err = db.AutoMigrate(&models.User{})
+    if err != nil {
+        log.Fatal("Erro ao migrar tabela User:", err)
+    }
+
     return db
 }
